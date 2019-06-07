@@ -28,13 +28,13 @@ import org.apache.hadoop.mapred.FileOutputFormat;
 
 
 // Error on using different classes, so only one will be used with all the rest
-public class MyMapReduce
+public class DevSTD
 {
-  public static class MyMap extends MapReduceBase
-                            implements Mapper<LongWritable,
-                                              Text,
-                                              Text,
-                                              DoubleWritable> {
+  public static class DevSTDMapper extends MapReduceBase
+                                   implements Mapper<LongWritable,
+                                                     Text,
+                                                     Text,
+                                                     DoubleWritable> {
 
 
     public void map(LongWritable key,
@@ -52,19 +52,19 @@ public class MyMapReduce
         int COLUMN_MAX = 9;
         for (int i = 0; i < COLUMN_MAX; i++)
         {
-          aux_text = new Text(i);
-          aux_double = new DoubleWritable( Double.parseDouble(tokens[i]));
-          output.collect(aux_text, aux_double));
+          aux_text = new Text(Integer.toString(i));
+          aux_double = new DoubleWritable(Double.parseDouble(tokens[i]));
+          output.collect(aux_text, aux_double);
         }
       }
     }
   }
 
-  public static class MyReduce extends MapReduceBase
-                               implements Reducer<Text,
-                                                  DoubleWritable,
-                                                  Text,
-                                                  DoubleWritable> {
+  public static class DevSTDReducer extends MapReduceBase
+                                    implements Reducer<Text,
+                                                       DoubleWritable,
+                                                       Text,
+                                                       DoubleWritable> {
 
     private ArrayList<Double> arraylist;
 
@@ -103,16 +103,16 @@ public class MyMapReduce
   {
     if (args.length == 2)
     {
-      JobConf job = new JobConf(MyMapReduce.class);
-      job.setJobName("MyMapReduce");
+      JobConf job = new JobConf(DevSTD.class);
+      job.setJobName("DevSTD");
 
       String in_filepath = args[0];
       String out_filepath = args[1];
       FileInputFormat.addInputPath(job, new Path(in_filepath));
       FileOutputFormat.setOutputPath(job, new Path(out_filepath));
 
-      job.setMapperClass(MyMap.class);
-      job.setReducerClass(MyReduce.class);
+      job.setMapperClass(DevSTDMapper.class);
+      job.setReducerClass(DevSTDReducer.class);
       job.setOutputKeyClass(Text.class);
       job.setOutputValueClass(DoubleWritable.class);
       JobClient.runJob(job);
